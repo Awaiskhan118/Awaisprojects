@@ -1,0 +1,52 @@
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+import os
+
+def send_email(subject, body, to_email, from_email, smtp_server, smtp_port, login, password, attachment_path=None):
+    # Create a multipart message
+    msg = MIMEMultipart()
+    msg['From'] = from_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    
+    # Attach the body with the msg instance
+    msg.attach(MIMEText(body, 'plain'))
+    
+    # Attach the file if provided
+    if attachment_path:
+        filename = os.path.basename(attachment_path)
+        attachment = open(attachment_path, "rb")
+        
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload(attachment.read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', f'attachment; filename= {filename}')
+        
+        msg.attach(part)
+    
+    # Create SMTP session for sending the mail
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()  # enable security
+            server.login(login, password)  # login with mail_id and password
+            text = msg.as_string()
+            server.sendmail(from_email, to_email, text)
+            print("Email sent successfully!")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+if __name__ == "__main__":
+    subject = "Test Email"
+    body = "This is a test email with attachment."
+    to_email = "recipient@example.com"
+    from_email = "your-email@example.com"
+    smtp_server = "smtp.example.com"
+    smtp_port = 587
+    login = "your-email@example.com"
+    password = "your-email-password"
+    attachment_path = "path/to/your/attachment.txt"
+
+    send_email(subject, body, to_email, from_email, smtp_server, smtp_port, login, password, attachment_path)
