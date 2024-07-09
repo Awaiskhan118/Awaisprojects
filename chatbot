@@ -1,0 +1,34 @@
+import random
+
+class BasicChatbot:
+    def __init__(self):
+        self.responses = {
+            "hello": "Hello! How can I assist you today?",
+            "how are you": "I'm just a bot, but I'm here to help you!",
+            "what is your name": "I'm a basic chatbot created in Python.",
+            "bye": "Goodbye! Have a great day!"
+        }
+        self.fallback_responses = [
+            "I'm sorry, I don't understand that.",
+            "Can you please rephrase?",
+            "I'm not sure how to respond to that.",
+            "Could you please elaborate?"
+        ]
+
+    def get_response(self, user_input):
+        user_input = user_input.lower()
+        return self.responses.get(user_input, random.choice(self.fallback_responses))
+
+def main():
+    bot = BasicChatbot()
+    print("Chatbot: Hi! I'm a basic chatbot. Type 'bye' to exit.")
+    
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == "bye":
+            print("Chatbot: " + bot.get_response("bye"))
+            break
+        print("Chatbot: " + bot.get_response(user_input))
+
+if __name__ == "__main__":
+    main()
